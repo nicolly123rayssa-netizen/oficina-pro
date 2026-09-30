@@ -39,3 +39,14 @@ on conflict (id) do nothing;
 create policy "Authenticated users can upload quote photos" on storage.objects for insert to authenticated with check (bucket_id = 'quote-photos');
 create policy "Public can view quote photos" on storage.objects for select to public using (bucket_id = 'quote-photos');
 create policy "Authenticated users can delete quote photos" on storage.objects for delete to authenticated using (bucket_id = 'quote-photos');
+create table if not exists public.settings (
+  id integer primary key default 1 check (id = 1),
+  name text not null default 'Oficina Pro',
+  cnpj text default '',
+  phone text default '',
+  email text default '',
+  address text default '',
+  updated_at timestamptz not null default now()
+);
+alter table public.settings enable row level security;
+create policy "Authenticated users can manage company settings" on public.settings for all to authenticated using (true) with check (true);
